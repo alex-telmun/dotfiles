@@ -33,6 +33,7 @@ SUCCESS_ICO=$'\uf00c '
 FAIL_ICO=$'\uf00d '
 KUBE_ICO=$'\u2388 '
 PLAY_ICO=$'\uf04b '
+WG_ICO=$'\ueb53 '
 
 C_RESET="%{$reset_color%}"
 NEW_LINE=$'\n'
@@ -84,8 +85,14 @@ function zsh_prompt_command {
     export RIGHTPS="${C_FG_RED}%? ${FAIL_ICO}${C_RESET}[%T]"
   fi
   [[ -n "${VIRTUAL_ENV_PROMPT}" ]] && VENV_PS1="${C_FG_YELLOW}${PY_ICO}${C_FG_CYAN}${VIRTUAL_ENV_PROMPT}${C_RESET}"
+  WG_INTERFACES=$(command find /var/run/wireguard -type f -exec basename -s .name {} \; | tr "\n" " ")
+  if [[ -n "${WG_INTERFACES}" ]]; then
+    WG_PS1="${C_FG_YELLOW}${WG_ICO}${C_FG_CYAN}${WG_INTERFACES}${C_RESET}"
+  else
+    WG_PS1=""
+  fi
   export PROMPT="${LOGI_WORKDIR}${C_FG_YELLOW} %~ ${C_FG_MAIN}%n${APPLE_ICO}%m${C_RESET} ${GIT_PS1} ${KUBE_PS1}${NEW_LINE}${C_FG_BLUE}${PLAY_ICO}${C_RESET} "
-  export RPROMPT="${VENV_PS1} ${RIGHTPS}"
+  export RPROMPT="${VENV_PS1} ${WG_PS1} ${RIGHTPS}"
 }
 
 ZSH_PROMPT_COMMAND=zsh_prompt_command
